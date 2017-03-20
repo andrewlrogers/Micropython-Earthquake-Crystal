@@ -1,22 +1,32 @@
 import urequests, json
 import utime
-
+import machine, neopixel
 
 my_latitude = 37.45
 my_longitude = -122.25
 my_radius = 50
 
-#Time variables
-#now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-#two_hours = (datetime.utcnow() - timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
+def convert_time(time_tuple): #takes time as a tuple and returns it as %Y-%m-%d %H:%M:%S
+    year = str(time_tuple[0])
+    month = str(time_tuple[1])
+    day = str(time_tuple[2])
+    hour = str(time_tuple[3])
+    minute = str(time_tuple[4])
+    second = str(time_tuple[5])
 
-#Since micropython does not have a RTC we need to get the UTC from the web.
-#We only need to run it once since subsequent times we will use the UTC from USGS
-t = urequests.get("http://api.timezonedb.com/v2/get-time-zone?key=5V1FYBUF388G&format=json&by=position&lat=37.754585&lng=-122.423247").json()
-utc_current = t['timestamp']
-utc_two_hours = int(str(utc_current - 7200)[:10]) #subtracts two hours from utc_current and takes the first ten digits.
+    time_string = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second
 
-print(utc_current, utc_two_hours)
+    return(time_string)
+
+#returns the current time in ('%Y-%m-%d %H:%M:%S') format
+def get_time():
+    currently = utime.localtime()
+    utc_current = utime.mktime(currently)
+    utc_two_hours = utc_current - 7200
+    two_hours = utime.localtime(utc_two_hours)
+    earlier_time = convert_time(two_hours)
+    return(earlier_time)
+
 
 # palette for led's
 mag_color = {'10':(255,0,0), '9':(228, 9, 55), '8':(228, 19, 109), '7':(228, 29, 158), '6':(228, 39, 203), '5':(211, 49, 228), '4':(175, 59, 227), '3':(143, 69, 227), '2':(115,79,227), '1':(92,89,227), '0':(0,52,255)}
@@ -33,7 +43,7 @@ def mag_light(magnitude): #changes the color of a light depending on magnitude
 
 
 def setup_quake_check():
-    payload = {'format':'geojson','latitude':my_latitude, 'longitude':my_longitude, 'maxradiuskm':my_radius, 'starttime':two_hours, 'orderby':'time-asc'}
+    payload = {'format':'geojson','latitude':my_latitude, 'longitude':my_longitude, 'maxradiuskm':my_radius, 'starttime':get_time(), 'orderby':'time-asc'}
     r = requests.get('https://earthquake.usgs.gov/fdsnws/event/1/query?', params = payload)
     response = r.json()
 
@@ -76,7 +86,9 @@ def check_quake(last_quake):
         sleep(10)
 
 
+
 #mag_light(1.27)
 
-#recent_quake = setup_quake_check()
+recent_quake = setup_quake_check()
+print(recent_quake)
 #check_quake(recent_quake)
