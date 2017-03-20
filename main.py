@@ -14,7 +14,7 @@ my_radius = 50
 #We only need to run it once since subsequent times we will use the UTC from USGS
 t = urequests.get("http://api.timezonedb.com/v2/get-time-zone?key=5V1FYBUF388G&format=json&by=position&lat=37.754585&lng=-122.423247").json()
 utc_current = t['timestamp']
-utc_two_hours = int(str(utc_current - 7200)[:10])
+utc_two_hours = int(str(utc_current - 7200)[:10]) #subtracts two hours from utc_current and takes the first ten digits.
 
 print(utc_current, utc_two_hours)
 
