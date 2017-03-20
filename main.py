@@ -1,7 +1,5 @@
-import json
-import requests
-from datetime import datetime, timedelta
-from time import sleep
+import urequests, json
+import utime
 
 
 my_latitude = 37.45
@@ -9,14 +7,14 @@ my_longitude = -122.25
 my_radius = 50
 
 #Time variables
-now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-two_hours = (datetime.utcnow() - timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
+#now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+#two_hours = (datetime.utcnow() - timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
 
 #Since micropython does not have a RTC we need to get the UTC from the web.
 #We only need to run it once since subsequent times we will use the UTC from USGS
-t = requests.get("http://api.timezonedb.com/v2/get-time-zone?key=5V1FYBUF388G&format=json&by=position&lat=37.754585&lng=-122.423247").json()
+t = urequests.get("http://api.timezonedb.com/v2/get-time-zone?key=5V1FYBUF388G&format=json&by=position&lat=37.754585&lng=-122.423247").json()
 utc_current = t['timestamp']
-utc_two_hours = utc_current - 7200
+utc_two_hours = int(str(utc_current - 7200)[:10])
 
 print(utc_current, utc_two_hours)
 
