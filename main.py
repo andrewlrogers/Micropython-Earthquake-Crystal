@@ -12,6 +12,14 @@ my_radius = 50
 now = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 two_hours = (datetime.utcnow() - timedelta(hours=2)).strftime('%Y-%m-%d %H:%M:%S')
 
+#Since micropython does not have a RTC we need to get the UTC from the web.
+#We only need to run it once since subsequent times we will use the UTC from USGS
+t = requests.get("http://api.timezonedb.com/v2/get-time-zone?key=5V1FYBUF388G&format=json&by=position&lat=37.754585&lng=-122.423247").json()
+utc_current = t['timestamp']
+utc_two_hours = utc_current - 7200
+
+print(utc_current, utc_two_hours)
+
 # palette for led's
 mag_color = {'10':(255,0,0), '9':(228, 9, 55), '8':(228, 19, 109), '7':(228, 29, 158), '6':(228, 39, 203), '5':(211, 49, 228), '4':(175, 59, 227), '3':(143, 69, 227), '2':(115,79,227), '1':(92,89,227), '0':(0,52,255)}
 
@@ -70,7 +78,7 @@ def check_quake(last_quake):
         sleep(10)
 
 
-mag_light(1.27)
+#mag_light(1.27)
 
 #recent_quake = setup_quake_check()
 #check_quake(recent_quake)
