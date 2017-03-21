@@ -43,8 +43,8 @@ def mag_light(magnitude): #changes the color of a light depending on magnitude
 
 
 def setup_quake_check():
-    payload = {'format':'geojson','latitude':my_latitude, 'longitude':my_longitude, 'maxradiuskm':my_radius, 'starttime':get_time(), 'orderby':'time-asc'}
-    r = requests.get('https://earthquake.usgs.gov/fdsnws/event/1/query?', params = payload)
+    request_payload = 'format=geojson'+'&'+'latitude=' + str(my_latitude) +'&'+ 'longitude=' + str(my_longitude) +'&'+ 'maxradiuskm=' + str(my_radius) +'&'+ 'starttime=' + get_time() +'&'+ 'orderby=time-asc'
+    r = urequests.get('https://earthquake.usgs.gov/fdsnws/event/1/query?' + request_payload)
     response = r.json()
 
     response_count = response['metadata']['count']
@@ -53,11 +53,11 @@ def setup_quake_check():
         for hour_quake in response['features']:
             magnitude = hour_quake['properties']['mag']
             quake_time = datetime.utcfromtimestamp(int(str(hour_quake['properties']['time'])[:10]))
-            last_quake = quake_time.strftime('%Y-%m-%d %H:%M:%S')
+            last_quake = quake_time
         sleep(20)
         return(last_quake)
     else:
-        last_quake = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+        last_quake = get_time()
         sleep(20)
         return(last_quake)
 
@@ -66,7 +66,7 @@ def setup_quake_check():
 def check_quake(last_quake):
     while True:
         payload = {'format':'geojson','latitude':my_latitude, 'longitude':my_longitude, 'maxradiuskm':my_radius, 'starttime':last_quake, 'orderby':'time-asc'}
-        r = requests.get('https://earthquake.usgs.gov/fdsnws/event/1/query?', params = payload)
+        r = urequests.get('https://earthquake.usgs.gov/fdsnws/event/1/query?', params = payload)
         response = r.json()
         response_count = response['metadata']['count']
 
