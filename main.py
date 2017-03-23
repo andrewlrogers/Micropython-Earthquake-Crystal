@@ -3,11 +3,24 @@ from utime import mktime, localtime
 from time import sleep
 import machine, neopixel
 
+
+""" G L O B A L """
+""" V A R I A B L E S """
+
 my_latitude = 37.45
 my_longitude = -122.25
 my_radius = 50
+neopixel_pin = 14
+number_of_neopixels = 12
 
+""" N E O P I X E L S """
+""" I N I T I A L I Z E """
+np = neopixel.NeoPixel(machine.Pin(neopixel_pin), number_of_neopixels)
+np.fill((0,0,0)) #Set's the led's to off
+np.write()
 
+""" T I M E """
+""" F U N C T I O N S """
 
 def convert_time(time_tuple): #takes time as a tuple and returns it as %Y-%m-%d %H:%M:%S
     time_string = str(time_tuple[0]) + '-' + str(time_tuple[1]) + '-' + str(time_tuple[2]) + ' ' + str(time_tuple[3]) + ':' + str(time_tuple[4]) + ':' + str(time_tuple[5])
@@ -27,14 +40,16 @@ def epoch_convert(timestamp):
     last_quake = convert_time(localtime(timestamp - time_diff))
     return(last_quake)
 
+""" L I G H T """
+""" F U N C T I O N S """
+
 # palette for led's
 mag_color = {'10':(255,0,0), '9':(228, 9, 55), '8':(228, 19, 109), '7':(228, 29, 158), '6':(228, 39, 203), '5':(211, 49, 228), '4':(175, 59, 227), '3':(143, 69, 227), '2':(115,79,227), '1':(92,89,227), '0':(0,52,255)}
 
 def mag_light(magnitude): #changes the color of a light depending on magnitude
     magnitude = (str(magnitude)[0])
-    neopixel = mag_color[magnitude]
-    print(neopixel)
-
+    np.fill(mag_color[magnitude])
+    np.write()
 
 def setup_quake_check():
     request_payload = 'format=geojson'+'&'+'latitude=' + str(my_latitude) +'&'+ 'longitude=' + str(my_longitude) +'&'+ 'maxradiuskm=' + str(my_radius) +'&'+ 'starttime=' + get_time() +'&'+ 'orderby=time-asc'
@@ -74,13 +89,12 @@ def check_quake(last_quake):
         else:
             last_quake = convert_time(localtime())
             print('Nothin shakin eggs n bacon')
-            sleep(1800) #30 minutes
+            sleep(1800) #1800 is30 minutes
+            np.fill((0,0,0)) #Set's the led's to off
+            np.write()
 
         sleep(10)
 
-
-
-#mag_light(1.27)
 
 recent_quake = setup_quake_check()
 check_quake(recent_quake)
