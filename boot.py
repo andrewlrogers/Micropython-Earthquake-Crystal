@@ -5,6 +5,7 @@ import gc
 import network
 from ntptime import settime
 import utime
+import time
 
 def do_connect():
     wlan = network.WLAN(network.STA_IF)
@@ -19,6 +20,7 @@ def do_connect():
     settime()
     print('network config:', wlan.ifconfig())
     print('time is:', utime.localtime())
+    time.sleep(.25)
 
 #connect to local network
 do_connect()

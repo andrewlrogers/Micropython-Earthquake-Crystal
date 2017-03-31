@@ -27,7 +27,7 @@ def chase(magnitude): #quick spin
         for pixel in range(number_of_neopixels):
             np.fill((0,0,0))
             np.write()
-            np[pixel]= COLOR_B
+            np[pixel]= COLOR_A
             np.write()
             sleep(.01)
     np.fill(COLOR_A)

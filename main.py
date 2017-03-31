@@ -13,13 +13,11 @@ my_radius = 50
 neopixel_pin = 14
 number_of_neopixels = 12
 
-led0 = machine.Pin(0, machine.Pin.OUT) #onboard LED to track functionality.
-
 
 """ N E O P I X E L S """
 """ I N I T I A L I Z E """
 np = neopixel.NeoPixel(machine.Pin(neopixel_pin), number_of_neopixels)
-np.fill((0,0,10)) #Set's the led's to off
+np.fill((0,0,0)) #Set's the led's to off
 np.write()
 
 """ T I M E """
@@ -58,7 +56,15 @@ def mag_light(magnitude): #changes the color of a light depending on magnitude
 def lerp(x, x0, x1, y0, y1):
     return y0 + (x-x0)*((y1-y0)/(x1-x0))
 
+def blink(): #blink's an LED to indicate that progam is running.
+    np[10] = (1,1,1)
+    np.write()
+    sleep(.25)
+    np.fill((0,0,0))
+    np.write()
+
 def diminish(): #slowly diminishes color of led over time.
+    blink()
     COLOR_A = np[0]
     COLOR_B = (0,0,0)
     current = ticks_ms()
@@ -103,7 +109,8 @@ def setup_quake_check(): #runs a broad check for the last quake based on current
             sleep(10)
             return(last_quake)
     except(OSError, MemoryError):
-        print('Error, going to try again in a sec')
+        np[5] = (5, 2, 0)
+        np.write()
         last_quake = convert_time(localtime())
         sleep(10)
         return(last_quake)
@@ -133,7 +140,8 @@ def check_quake(last_quake):
 
         except(OSError, MemoryError):
             last_quake = convert_time(localtime())
-            print('Error, gonna try again real soon')
+            np[8] = (3,0,5)
+            np.write()
             sleep(60) #1800 is 30 minutes
             diminish()
 
