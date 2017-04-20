@@ -3,6 +3,7 @@ from utime import mktime, localtime
 from time import sleep, ticks_ms
 import machine, neopixel
 from math import sin, pi
+import gc
 
 """ G L O B A L """
 """ V A R I A B L E S """
@@ -23,12 +24,14 @@ np.write()
 """ T I M E """
 """ F U N C T I O N S """
 
-def convert_time(time_tuple): #takes time as a tuple and returns it as %Y-%m-%d %H:%M:%S
+def convert_time(time_tuple):
+    """takes time as a tuple and returns it as %Y-%m-%d %H:%M:%S"""
     time_string = str(time_tuple[0]) + '-' + str(time_tuple[1]) + '-' + str(time_tuple[2]) + ' ' + str(time_tuple[3]) + ':' + str(time_tuple[4]) + ':' + str(time_tuple[5])
     return(time_string)
 
-#returns the current time in ('%Y-%m-%d %H:%M:%S') format
+
 def get_time():
+    """returns the current time in ('%Y-%m-%d %H:%M:%S') format"""
     currently = localtime()
     utc_current = mktime(currently)
     utc_two_hours = utc_current - 7200 #7200 is two hours
@@ -56,15 +59,18 @@ def mag_light(magnitude): #changes the color of a light depending on magnitude
 def lerp(x, x0, x1, y0, y1):
     return y0 + (x-x0)*((y1-y0)/(x1-x0))
 
-def blink(): #blink's an LED to indicate that progam is running.
-    np[10] = (1,1,1)
-    np.write()
-    sleep(.25)
-    np.fill((0,0,0))
-    np.write()
+def blink(blinks): #blink's an LED to indicate that progam is running.
+    for blink in range(blinks):
+        COLOR_A = np[10]
+        np[10] = (100, 100, 100)
+        np.write()
+        sleep(.25)
+        np[10]=COLOR_A
+        np.write()
+        sleep(.75)
 
 def diminish(): #slowly diminishes color of led over time.
-    blink()
+    blink(1)
     COLOR_A = np[0]
     COLOR_B = (0,0,0)
     current = ticks_ms()
@@ -101,18 +107,23 @@ def setup_quake_check(): #runs a broad check for the last quake based on current
                 magnitude = setup_quake['properties']['mag']
                 timestamp = (int(str(setup_quake['properties']['time'])[:10]))
                 last_quake = epoch_convert(timestamp)
+                print(last_quake)
+            del response
             chase(magnitude)
             return(last_quake)
 
         else:
+            gc.collect()
             last_quake = convert_time(localtime())
-            sleep(10)
+            blink(120)
             return(last_quake)
     except(OSError, MemoryError):
+        gc.collect()
+        #machine.reset() #reset for errors?
         np[5] = (5, 2, 0)
         np.write()
         last_quake = convert_time(localtime())
-        sleep(10)
+        sleep(60)
         return(last_quake)
 
 
@@ -130,20 +141,24 @@ def check_quake(last_quake):
                     chase(quake['properties']['mag'])
                     timestamp = (int(str(quake['properties']['time'])[:10]))
                     print(last_quake)
-                    sleep(20)
+                    del response
+                    blink(120)
 
             else:
+                del response
                 last_quake = convert_time(localtime())
                 print('Nothin shakin eggs n bacon')
                 diminish()
-                sleep(60) #1800 is30 minutes
+                blink(120) #1800 is30 minutes
 
         except(OSError, MemoryError):
+            gc.collect()
             last_quake = convert_time(localtime())
             np[8] = (3,0,5)
             np.write()
-            sleep(60) #1800 is 30 minutes
+            sleep(3)
             diminish()
+            sleep(20)
 
 
 sleep(5)
