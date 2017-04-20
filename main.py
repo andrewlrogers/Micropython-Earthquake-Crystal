@@ -105,7 +105,7 @@ def setup_quake_check(): #runs a broad check for the last quake based on current
         if response_count != 0: #If there is a response do this.
             for setup_quake in response['features']:
                 magnitude = setup_quake['properties']['mag']
-                timestamp = (int(str(setup_quake['properties']['time'])[:10]))
+                timestamp = (int(str(setup_quake['properties']['time'])[:10]))+1
                 last_quake = epoch_convert(timestamp)
                 print(last_quake)
             del response
@@ -139,7 +139,7 @@ def check_quake(last_quake):
             if response_count != 0:
                 for quake in response['features']:
                     chase(quake['properties']['mag'])
-                    timestamp = (int(str(quake['properties']['time'])[:10]))
+                    timestamp = (int(str(quake['properties']['time'])[:10]))+1
                     print(last_quake)
                     del response
                     blink(120)
