@@ -18,7 +18,7 @@ number_of_neopixels = 12
 """ N E O P I X E L S """
 """ I N I T I A L I Z E """
 np = neopixel.NeoPixel(machine.Pin(neopixel_pin), number_of_neopixels)
-np.fill((0,0,0)) #Set's the led's to off
+np.fill((1,1,1)) #Set's the led's to off
 np.write()
 
 """ T I M E """
@@ -62,7 +62,7 @@ def lerp(x, x0, x1, y0, y1):
 def blink(blinks): #blink's an LED to indicate that progam is running.
     for blink in range(blinks):
         COLOR_A = np[10]
-        np[10] = (100, 100, 100)
+        np[10] = (3, 3, 3)
         np.write()
         sleep(.25)
         np[10]=COLOR_A
@@ -72,7 +72,7 @@ def blink(blinks): #blink's an LED to indicate that progam is running.
 def diminish(): #slowly diminishes color of led over time.
     blink(1)
     COLOR_A = np[0]
-    COLOR_B = (0,0,0)
+    COLOR_B = (1,1,1)
     current = ticks_ms()
     x = sin(2.0 * pi * .001 * current)
     red = lerp(x, -1.0, 1.0, COLOR_A[0], COLOR_B[0])
@@ -86,7 +86,7 @@ def chase(magnitude): #quick spin
     COLOR_A = mag_color[(str(magnitude)[0])]
     for t in range (5):
         for pixel in range(number_of_neopixels):
-            np.fill((0,0,0))
+            np.fill((1,1,1))
             np.write()
             np[pixel]= COLOR_A
             np.write()
