@@ -10,7 +10,7 @@ import gc
 
 my_latitude = 37.45
 my_longitude = -122.25
-my_radius = 50
+my_radius = 100
 neopixel_pin = 14
 number_of_neopixels = 12
 
