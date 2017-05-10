@@ -6,6 +6,7 @@ import machine, neopixel
 from math import sin, pi
 
 
+
 """ G L O B A L """
 """ V A R I A B L E S """
 
@@ -60,7 +61,7 @@ def pulse(magnitude): #Pulses magnitude color with COLOR_B before setting to mag
 
     for m in range(200):
         current = ticks_ms()
-        x = math.sin(2.0 * math.pi * .001 * current)
+        x = sin(2.0 * pi * .001 * current)
         red = lerp(x, -1.0, 1.0, COLOR_A[0], COLOR_B[0])
         green = lerp(x, -1.0, 1.0, COLOR_A[1], COLOR_B[1])
         blue = lerp(x, -1.0, 1.0, COLOR_A[2], COLOR_B[2])
