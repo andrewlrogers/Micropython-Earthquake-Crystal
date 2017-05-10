@@ -18,7 +18,7 @@ number_of_neopixels = 12
 """ N E O P I X E L S """
 """ I N I T I A L I Z E """
 np = neopixel.NeoPixel(machine.Pin(neopixel_pin), number_of_neopixels)
-np.fill((1,1,1)) #Set's the led's to off
+np.fill((1,1,1)) #Set's the led's to dim
 np.write()
 
 """ T I M E """
@@ -120,7 +120,7 @@ def setup_quake_check(): #runs a broad check for the last quake based on current
     except(OSError, MemoryError):
         gc.collect()
         #machine.reset() #reset for errors?
-        np[5] = (5, 2, 0)
+        np.fill(5, 2, 0)
         np.write()
         last_quake = convert_time(localtime())
         sleep(60)
@@ -155,7 +155,7 @@ def check_quake(last_quake):
         except(OSError, MemoryError):
             gc.collect()
             last_quake = convert_time(localtime())
-            np[8] = (3,0,5)
+            np.fill(3,0,5)
             np.write()
             sleep(3)
             diminish()

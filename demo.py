@@ -51,7 +51,24 @@ def diminish(): #slowly diminishes color of led over time.
     blue = lerp(x, -1.0, 1.0, COLOR_A[2], COLOR_B[2])
     np.fill((int(red), int(green), int(blue)))
     np.write()
+    print((int(red), int(green), int(blue)))
     sleep(0.01)
+
+def pulse(magnitude): #Pulses magnitude color with COLOR_B before setting to mag_color
+    COLOR_A = mag_color[(str(magnitude)[0])]
+    COLOR_B = (255,255,255)
+
+    for m in range(200):
+        current = ticks_ms()
+        x = math.sin(2.0 * math.pi * .001 * current)
+        red = lerp(x, -1.0, 1.0, COLOR_A[0], COLOR_B[0])
+        green = lerp(x, -1.0, 1.0, COLOR_A[1], COLOR_B[1])
+        blue = lerp(x, -1.0, 1.0, COLOR_A[2], COLOR_B[2])
+        np.fill((int(red), int(green), int(blue)))
+        np.write()
+        sleep(0.01)
+    np.fill(COLOR_A)
+    np.write()
 
 def chase(magnitude): #quick spin
     COLOR_A = mag_color[(str(magnitude)[0])]
@@ -71,11 +88,11 @@ def chase(magnitude): #quick spin
 
 #main program
 
-def demo(interval, demo_mag, iterations);
+def demo(interval, demo_mag, iterations):
     blink(interval)
-    chase(demo_mag)
-    for i in range(iterations);
+    pulse(demo_mag)
+    for i in range(iterations):
         blink(interval)
         diminish()
 
-demo(120, 3, 5)
+demo(10, 3, 15)
