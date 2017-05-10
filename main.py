@@ -140,9 +140,10 @@ def check_quake(last_quake):
                 for quake in response['features']:
                     chase(quake['properties']['mag'])
                     timestamp = (int(str(quake['properties']['time'])[:10]))+1
-                    print(last_quake)
                     del response
                     blink(120)
+                    last_quake = epoch_convert(timestamp)
+                    check_quake(last_quake)
 
             else:
                 del response
