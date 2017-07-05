@@ -37,7 +37,7 @@ def get_time():
     utc_two_hours = utc_current - 7200 #7200 is two hours
     two_hours = localtime(utc_two_hours)
     earlier_time = convert_time(two_hours)
-    return(earlier_time)
+    return(utc_current)
 
 def epoch_convert(timestamp):
     time_diff = 946684800 #seconds between 1976 epoch and 2000 epoch
