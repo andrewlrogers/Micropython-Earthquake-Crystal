@@ -10,7 +10,7 @@ import gc
 
 my_latitude = 37.45
 my_longitude = -122.25
-my_radius = 100
+my_radius = 100 #radius in kilometers
 neopixel_pin = 14
 number_of_neopixels = 12
 
@@ -48,7 +48,7 @@ def epoch_convert(timestamp):
 """ F U N C T I O N S """
 
 # palette for led's
-mag_color = {'10':(255,0,0), '9':(255, 0, 0), '8':(228, 19, 109), '7':(228, 29, 158), '6':(228, 39, 203), '5':(220, 2, 241), '4':(8, 236, 4), '3':(6,230,277), '2':(5, 234, 77), '1':(5,232,153), '0':(32,5,234)}
+mag_color = {'10':(255,0,0), '9':(255, 100, 0), '8':(228, 19, 109), '7':(228, 29, 158), '6':(228, 39, 203), '5':(220, 2, 241), '4':(8, 236, 4), '3':(6,230,277), '2':(5, 234, 77), '1':(5,232,153), '0':(32,5,234)}
 
 def pulse(magnitude): #Pulses magnitude color with COLOR_B before setting to mag_color
     COLOR_A = mag_color[(str(magnitude)[0])]
@@ -56,7 +56,7 @@ def pulse(magnitude): #Pulses magnitude color with COLOR_B before setting to mag
 
     for m in range(200):
         current = ticks_ms()
-        x = math.sin(2.0 * math.pi * .001 * current)
+        x = sin(2.0 * pi * .001 * current)
         red = lerp(x, -1.0, 1.0, COLOR_A[0], COLOR_B[0])
         green = lerp(x, -1.0, 1.0, COLOR_A[1], COLOR_B[1])
         blue = lerp(x, -1.0, 1.0, COLOR_A[2], COLOR_B[2])
@@ -111,35 +111,6 @@ def chase(magnitude): #quick spin
 
 """ M A I N  Q U A K E """
 
-    try:
-        request_payload = 'format=geojson'+'&'+'latitude=' + str(my_latitude) +'&'+ 'longitude=' + str(my_longitude) +'&'+ 'maxradiuskm=' + str(my_radius) +'&'+ 'starttime=' + get_time() +'&'+ 'orderby=time-asc'
-        response = urequests.get('https://earthquake.usgs.gov/fdsnws/event/1/query?' + request_payload).json()
-        response_count = response['metadata']['count']
-
-        if response_count != 0: #If there is a response do this.
-            for setup_quake in response['features']:
-                magnitude = setup_quake['properties']['mag']
-                timestamp = (int(str(setup_quake['properties']['time'])[:10]))+1
-                last_quake = epoch_convert(timestamp)
-                print(last_quake)
-            del response
-            pulse(magnitude)
-            return(last_quake)
-
-        else:
-            gc.collect()
-            last_quake = convert_time(localtime())
-            blink(120)
-            return(last_quake)
-    except(OSError, MemoryError):
-        gc.collect()
-        #machine.reset() #reset for errors?
-        np.fill(5, 2, 0)
-        np.write()
-        last_quake = convert_time(localtime())
-        sleep(60)
-        return(last_quake)
-
 
 #main program
 def check_quake(last_quake):
@@ -162,7 +133,6 @@ def check_quake(last_quake):
             else:
                 del response
                 last_quake = convert_time(localtime())
-                print('Nothin shakin eggs n bacon')
                 diminish()
                 blink(120) #1800 is30 minutes
 
